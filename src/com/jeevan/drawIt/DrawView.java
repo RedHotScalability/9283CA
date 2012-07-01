@@ -8,11 +8,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 
-public class DrawView extends View implements OnTouchListener {
+public class DrawView extends View {
 	List<Point> points = new CustomArrayList<Point>();
 	Paint paint = new Paint();
 	Paint paint2 = new Paint();
@@ -38,7 +36,6 @@ public class DrawView extends View implements OnTouchListener {
 		super(context, attrs);
 		setFocusable(true);
 		setFocusableInTouchMode(true);
-		this.setOnTouchListener(this);
 		paint.setColor(Color.BLACK);
 		paint2.setColor(Color.BLACK);
 		paint.setStrokeWidth(5);
@@ -78,15 +75,7 @@ public class DrawView extends View implements OnTouchListener {
 	}
 
 	
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		Point point = new Point();
-        point.x = event.getX();
-        point.y = event.getY();
-        point.state = event.getActionMasked();
-        points.add(point);
-        return true;
-	}
+
 	
 
 }

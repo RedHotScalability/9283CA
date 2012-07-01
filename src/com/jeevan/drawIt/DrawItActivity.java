@@ -1,6 +1,9 @@
 package com.jeevan.drawIt;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,11 +20,11 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 
-
 public class DrawItActivity extends Activity {
 	
 	private DrawItService mBoundService;
 	final Messenger activityMessenger = new Messenger(new IncomingHandler());
+	private JSONObject jsonObject;
  
 	class IncomingHandler extends Handler {
 	    @Override
@@ -30,26 +33,35 @@ public class DrawItActivity extends Activity {
 	    }
 	}
 	
-	/** Called when the activity is first created. */
-    @Override
+
+
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-//        startService(new Intent(DrawItActivity.this, DrawItService.class));
-//        doBindService();
-//         DrawView drawView =(DrawView) findViewById(R.id.DrawView);
-//         OnTouchListener l = new OnTouchListener() {
-//
-//        	    @Override
-//        	    public boolean onTouch(View v, MotionEvent event) {
-//        	    	
-//        	    	
-//        	                        return true;
-//        	    }
-//        	    };
-//         
-//         
-//         drawView.setOnTouchListener(l);
+        jsonObject = new JSONObject();
+        startService(new Intent(DrawItActivity.this, DrawItService.class));
+        doBindService();
+         final DrawView drawView =(DrawView) findViewById(R.id.DrawView);
+         OnTouchListener l = new OnTouchListener() {
+        	 
+        		@Override
+        		public boolean onTouch(View v, MotionEvent event) {
+        			Point point = new Point();
+        	        point.x = event.getX();
+        	        point.y = event.getY();
+        	        point.state = event.getActionMasked();
+        	        drawView.addpoint(point);       	        
+        	        try {
+						mBoundService.sendMessage("drawClick",jsonObject.put("x", event.getX()).put("y", event.getY()).put("type", event.getActionMasked()));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        	        return true;
+        		} };
+         
+         drawView.setOnTouchListener(l);
     }
     
     @Override
@@ -72,7 +84,7 @@ public class DrawItActivity extends Activity {
         public void onServiceDisconnected(ComponentName className) {
             mBoundService = null;
         }
-    };
+    }; 
     
     void doBindService() {
         bindService(new Intent(DrawItActivity.this, 
@@ -84,10 +96,6 @@ public class DrawItActivity extends Activity {
     	unbindService(mConnection);
         }
     
-    
 
-    
- 
-    
   
 }

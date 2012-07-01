@@ -18,6 +18,15 @@ import io.socket.SocketIOException;
 public class DrawItService extends Service implements IOCallback {
 	private SocketIO socket;
 	private Messenger messenger = null;
+	private JSONObject jsonObject;
+
+	
+	
+	public void sendMessage (String event, JSONObject jsonObject2) {
+		socket.emit(event, jsonObject2);
+	}
+	
+	
 	
 	public void addMessenger (Messenger messenger) {
 		this.messenger = messenger;
@@ -39,6 +48,7 @@ public class DrawItService extends Service implements IOCallback {
 
 	@Override
 	public void onCreate() {
+		jsonObject = new JSONObject();
 		super.onCreate();
 	}
 
